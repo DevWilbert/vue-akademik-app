@@ -1,44 +1,45 @@
-<!-- src/components/Dashboard.vue -->
 <template>
-  <div class="min-h-screen flex flex-col items-center justify-center bg-gray-100 p-6">
-    <div class="bg-white p-6 rounded shadow-md w-full max-w-xl">
-      <h2 class="text-2xl font-bold mb-4">Dashboard</h2>
-      <p class="mb-2"><strong>Email:</strong> {{ user?.email }}</p>
-      <p class="mb-4"><strong>Role:</strong> {{ user?.role }}</p>
+  <div class="min-h-screen flex flex-col bg-gray-100">
+    <Navbar :user="user" @logout="logout" />
 
-      <button
-        @click="logout"
-        class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
-      >
-        Logout
-      </button>
+    <div class="flex flex-1">
+      <Sidebar :role="user?.role" />
+
+      <div class="flex-1 p-4">
+        <router-view v-slot="{ Component }">
+          <component :is="Component" :role="user?.role" />
+        </router-view>
+
+      </div>
     </div>
   </div>
 </template>
 
 <script setup>
 import { onMounted, ref } from 'vue'
-import axios from 'axios'
 import { useRouter } from 'vue-router'
+import axios from 'axios'
+
+import Navbar from '@/components/Navbar.vue'
+import Sidebar from '@/components/Sidebar.vue'
 
 const user = ref(null)
 const router = useRouter()
 
 onMounted(async () => {
   const token = localStorage.getItem('token')
-
   if (!token) {
     router.push('/')
     return
   }
 
   try {
-    const response = await axios.get('http://localhost:8000/api/user', {
+    const res = await axios.get('http://localhost:8000/api/user', {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     })
-    user.value = response.data
+    user.value = res.data
   } catch (err) {
     localStorage.removeItem('token')
     router.push('/')
@@ -47,22 +48,12 @@ onMounted(async () => {
 
 const logout = async () => {
   const token = localStorage.getItem('token')
-
   try {
-    await axios.post(
-      'http://localhost:8000/api/logout',
-      {},
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    )
-  } catch (err) {
-    console.error('Logout error:', err)
-  } finally {
-    localStorage.removeItem('token')
-    router.push('/')
-  }
+    await axios.post('http://localhost:8000/api/logout', {}, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+  } catch { }
+  localStorage.removeItem('token')
+  router.push('/')
 }
 </script>
