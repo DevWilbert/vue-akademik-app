@@ -8,8 +8,12 @@
         </button>
       </div>
 
+      <div v-if="isLoading" class="flex justify-center py-10">
+        <div class="animate-spin rounded-full h-12 w-12 border-t-4 border-blue-500 border-solid"></div>
+      </div>
+
       <!-- Tabel Mahasiswa -->
-      <table class="min-w-full table-auto border-collapse">
+      <table v-else class="min-w-full table-auto border-collapse">
         <thead>
           <tr class="bg-gray-200">
             <th class="px-4 py-2 text-left">No</th>
@@ -23,13 +27,13 @@
         </thead>
         <tbody>
           <tr v-for="(mahasiswa, index) in paginatedData" :key="mahasiswa.id">
-            <td class="px-4 py-2">{{ (currentPage - 1) * itemsPerPage + index + 1 }}</td>
-            <td class="px-4 py-2">{{ mahasiswa.nama }}</td>
-            <td class="px-4 py-2">{{ mahasiswa.nim }}</td>
-            <td class="px-4 py-2">{{ mahasiswa.user.email }}</td>
-            <td class="px-4 py-2">{{ mahasiswa.alamat }}</td>
-            <td class="px-4 py-2">{{ mahasiswa.no_hp }}</td>
-            <td class="px-4 py-2">
+            <td class="px-4 py-2 w-[40px]">{{ (currentPage - 1) * itemsPerPage + index + 1 }}</td>
+            <td class="px-4 py-2 w-[100px] whitespace-normal break-words">{{ mahasiswa.nama }}</td>
+            <td class="px-4 py-2 w-[100px] whitespace-normal break-all">{{ mahasiswa.nim }}</td>
+            <td class="px-4 py-2 w-[130px] whitespace-normal break-all">{{ mahasiswa.user.email }}</td>
+            <td class="px-4 py-2 w-[100px] whitespace-normal break-words">{{ mahasiswa.alamat }}</td>
+            <td class="px-4 py-2 w-[87px] whitespace-normal break-all">{{ mahasiswa.no_hp }}</td>
+            <td class="px-4 py-2 w-[100px]">
               <button @click="openEditModal(mahasiswa)" class="text-blue-500 hover:text-blue-700">
                 <i class="fas fa-edit"></i> Edit
               </button>
@@ -134,6 +138,7 @@ const toast = useToast()
 const mahasiswaList = ref([])
 const currentPage = ref(1)
 const itemsPerPage = 10
+const isLoading = ref(false)
 
 const showModal = ref(false)
 const isEdit = ref(false)
@@ -149,6 +154,7 @@ const form = ref({
 const token = localStorage.getItem('token')
 
 const fetchMahasiswa = async () => {
+  isLoading.value = true
   try {
     const res = await axios.get('http://localhost:8000/api/mahasiswa', {
       headers: { Authorization: `Bearer ${token}` }
@@ -157,6 +163,8 @@ const fetchMahasiswa = async () => {
   } catch (error) {
     toast.error('Gagal memuat data mahasiswa.')
     console.error(error)
+  } finally {
+    isLoading.value = false
   }
 }
 
