@@ -44,8 +44,10 @@
 
       <!-- Pagination -->
       <div class="mt-4 flex justify-start items-center space-x-4">
-        <button @click="goToFirstPage" :disabled="currentPage === 1" class="bg-blue-500 text-white p-2 rounded hover:bg-blue-600 disabled:bg-gray-300">First</button>
-        <button @click="prevPage" :disabled="currentPage === 1" class="bg-blue-500 text-white p-2 rounded hover:bg-blue-600 disabled:bg-gray-300">Prev</button>
+        <button @click="goToFirstPage" :disabled="currentPage === 1"
+          class="bg-blue-500 text-white p-2 rounded hover:bg-blue-600 disabled:bg-gray-300">First</button>
+        <button @click="prevPage" :disabled="currentPage === 1"
+          class="bg-blue-500 text-white p-2 rounded hover:bg-blue-600 disabled:bg-gray-300">Prev</button>
 
         <div class="flex space-x-2">
           <button v-for="page in pageNumbers" :key="page" @click="goToPage(page)"
@@ -55,8 +57,10 @@
           </button>
         </div>
 
-        <button @click="nextPage" :disabled="currentPage === totalPages" class="bg-blue-500 text-white p-2 rounded hover:bg-blue-600 disabled:bg-gray-300">Next</button>
-        <button @click="goToLastPage" :disabled="currentPage === totalPages" class="bg-blue-500 text-white p-2 rounded hover:bg-blue-600 disabled:bg-gray-300">Last</button>
+        <button @click="nextPage" :disabled="currentPage === totalPages"
+          class="bg-blue-500 text-white p-2 rounded hover:bg-blue-600 disabled:bg-gray-300">Next</button>
+        <button @click="goToLastPage" :disabled="currentPage === totalPages"
+          class="bg-blue-500 text-white p-2 rounded hover:bg-blue-600 disabled:bg-gray-300">Last</button>
         <span class="text-gray-600">Page {{ currentPage }} of {{ totalPages }}</span>
       </div>
     </div>
@@ -84,13 +88,14 @@
           </div>
           <div class="mb-3">
             <label class="block">Dosen</label>
-            <select v-model="form.dosen_id" class="w-full border px-3 py-2 rounded" required>
-              <option v-for="dosen in dosenList" :key="dosen.id" :value="dosen.id">{{ dosen.nama }}</option>
-            </select>
+            <multiselect v-model="form.dosen_id" :options="dosenList" :custom-label="dosen => dosen.nama" track-by="id"
+              placeholder="Pilih dosen" :searchable="true" :close-on-select="true" :allow-empty="false" label="nama"
+              class="w-full" />
           </div>
 
           <div class="flex justify-end gap-2 mt-4">
-            <button type="button" @click="closeModal" class="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400">Batal</button>
+            <button type="button" @click="closeModal"
+              class="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400">Batal</button>
             <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
               {{ isEdit ? 'Update' : 'Simpan' }}
             </button>
@@ -105,6 +110,8 @@
 import { ref, onMounted, computed } from 'vue'
 import axios from 'axios'
 import { useToast } from 'vue-toastification'
+import Multiselect from 'vue-multiselect'
+import 'vue-multiselect/dist/vue-multiselect.min.css'
 
 const toast = useToast()
 const matakuliahList = ref([])
@@ -180,7 +187,15 @@ const openAddModal = () => {
 
 const openEditModal = (matakuliah) => {
   isEdit.value = true
-  form.value = { ...matakuliah }
+  const selectedDosen = dosenList.value.find(d => d.id === matakuliah.dosen_id)
+  form.value = {
+    id: matakuliah.id,
+    kode_matakuliah: matakuliah.kode_matakuliah,
+    nama: matakuliah.nama,
+    sks: matakuliah.sks,
+    semester: matakuliah.semester,
+    dosen_id: selectedDosen || matakuliah.dosen_id
+  }
   showModal.value = true
 }
 
@@ -196,10 +211,15 @@ const submitForm = async () => {
 
     const method = isEdit.value ? 'put' : 'post'
 
+    const dataToSend = {
+      ...form.value,
+      dosen_id: typeof form.value.dosen_id === 'object' ? form.value.dosen_id.id : form.value.dosen_id
+    }
+
     await axios({
       method,
       url,
-      data: form.value,
+      data: dataToSend,
       headers: { Authorization: `Bearer ${token}` }
     })
 

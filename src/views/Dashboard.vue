@@ -7,7 +7,7 @@
 
       <div class="flex-1 p-4">
         <router-view v-slot="{ Component }">
-          <component :is="Component" :role="user?.role" />
+          <component :is="Component" :role="user?.role" :user="user" />
         </router-view>
 
       </div>
