@@ -12,6 +12,7 @@
       <table class="min-w-full table-auto border-collapse">
         <thead>
           <tr class="bg-gray-200">
+            <th class="px-4 py-2 text-left">No</th>
             <th class="px-4 py-2 text-left">Nama</th>
             <th class="px-4 py-2 text-left">NIM</th>
             <th class="px-4 py-2 text-left">Email</th>
@@ -22,6 +23,7 @@
         </thead>
         <tbody>
           <tr v-for="(mahasiswa, index) in paginatedData" :key="mahasiswa.id">
+            <td class="px-4 py-2">{{ (currentPage - 1) * itemsPerPage + index + 1 }}</td>
             <td class="px-4 py-2">{{ mahasiswa.nama }}</td>
             <td class="px-4 py-2">{{ mahasiswa.nim }}</td>
             <td class="px-4 py-2">{{ mahasiswa.user.email }}</td>
@@ -40,13 +42,47 @@
       </table>
 
       <!-- Pagination -->
-      <div class="mt-4 flex justify-between items-center">
+      <div class="mt-4 flex justify-start items-center space-x-4">
+        <!-- First Button -->
+        <button @click="goToFirstPage" :disabled="currentPage === 1"
+          class="bg-blue-500 text-white p-2 rounded flex items-center space-x-2 hover:bg-blue-600 disabled:bg-gray-300">
+          <i class="fas fa-chevron-left"></i>
+          <span>First</span>
+        </button>
+
+        <!-- Prev Button -->
         <button @click="prevPage" :disabled="currentPage === 1"
-          class="bg-gray-200 text-gray-600 p-2 rounded hover:bg-gray-300">Prev</button>
-        <span class="text-gray-600">Page {{ currentPage }} of {{ totalPages }}</span>
+          class="bg-blue-500 text-white p-2 rounded flex items-center space-x-2 hover:bg-blue-600 disabled:bg-gray-300">
+          <i class="fas fa-chevron-left"></i>
+          <span>Prev</span>
+        </button>
+
+        <!-- Page Numbers -->
+        <div class="flex space-x-2">
+          <button v-for="page in pageNumbers" :key="page" @click="goToPage(page)"
+            :class="{ 'bg-blue-500 text-white': page === currentPage, 'bg-gray-200 text-gray-600': page !== currentPage }"
+            class="p-2 rounded hover:bg-blue-400 flex items-center justify-center">
+            {{ page }}
+          </button>
+        </div>
+
+        <!-- Next Button -->
         <button @click="nextPage" :disabled="currentPage === totalPages"
-          class="bg-gray-200 text-gray-600 p-2 rounded hover:bg-gray-300">Next</button>
+          class="bg-blue-500 text-white p-2 rounded flex items-center space-x-2 hover:bg-blue-600 disabled:bg-gray-300">
+          <span>Next</span>
+          <i class="fas fa-chevron-right"></i>
+        </button>
+
+        <!-- Last Button -->
+        <button @click="goToLastPage" :disabled="currentPage === totalPages"
+          class="bg-blue-500 text-white p-2 rounded flex items-center space-x-2 hover:bg-blue-600 disabled:bg-gray-300">
+          <span>Last</span>
+          <i class="fas fa-chevron-right"></i>
+        </button>
+
+        <span class="text-gray-600">Page {{ currentPage }} of {{ totalPages }}</span>
       </div>
+
     </div>
 
     <!-- Modal Form Tambah/Edit -->
@@ -97,7 +133,7 @@ const toast = useToast()
 
 const mahasiswaList = ref([])
 const currentPage = ref(1)
-const itemsPerPage = 5
+const itemsPerPage = 10
 
 const showModal = ref(false)
 const isEdit = ref(false)
@@ -132,8 +168,38 @@ const paginatedData = computed(() => {
 })
 
 const totalPages = computed(() => Math.ceil(mahasiswaList.value.length / itemsPerPage))
-const prevPage = () => currentPage.value > 1 && currentPage.value--
-const nextPage = () => currentPage.value < totalPages.value && currentPage.value++
+
+const pageNumbers = computed(() => {
+  const pages = []
+  for (let i = 1; i <= totalPages.value; i++) {
+    pages.push(i)
+  }
+  return pages
+})
+
+const prevPage = () => {
+  if (currentPage.value > 1) {
+    currentPage.value--
+  }
+}
+
+const nextPage = () => {
+  if (currentPage.value < totalPages.value) {
+    currentPage.value++
+  }
+}
+
+const goToPage = (page) => {
+  currentPage.value = page
+}
+
+const goToFirstPage = () => {
+  currentPage.value = 1
+}
+
+const goToLastPage = () => {
+  currentPage.value = totalPages.value
+}
 
 const openAddModal = () => {
   isEdit.value = false
