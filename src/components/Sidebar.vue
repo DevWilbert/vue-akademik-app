@@ -20,6 +20,10 @@
                     to="/dashboard/matakuliah" 
                     class="block p-2 hover:bg-gray-100 rounded-lg transition-all duration-300 ease-in-out" 
                     active-class="bg-red-500 text-white rounded-lg">Mata Kuliah</router-link>
+                <router-link 
+                    to="/dashboard/mahasiswa-matakuliah" 
+                    class="block p-2 hover:bg-gray-100 rounded-lg transition-all duration-300 ease-in-out" 
+                    active-class="bg-red-500 text-white rounded-lg">Mahasiswa - Mata Kuliah</router-link>
             </li>
 
             <!-- Mahasiswa Role -->

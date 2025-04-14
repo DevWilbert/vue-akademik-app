@@ -6,6 +6,7 @@ import MataKuliahView from '@/views/MataKuliahView.vue'
 import AmbilMataKuliahView from '@/views/AmbilMataKuliahView.vue'
 import Login from '@/views/Login.vue'
 import DashboardHome from '@/views/DashboardHome.vue'
+import MahasiswaMataKuliahView from '@/views/MahasiswaMataKuliahView.vue'
 
 const routes = [
   { path: '/', component: Login },
@@ -18,6 +19,7 @@ const routes = [
       { path: 'dosen', component: DosenView },
       { path: 'matakuliah', component: MataKuliahView },
       { path: 'ambil-matakuliah', component: AmbilMataKuliahView },
+      { path: 'mahasiswa-matakuliah', component: MahasiswaMataKuliahView },
     ]
   }
 ]
