@@ -1,12 +1,18 @@
 <template>
   <div class="min-h-screen bg-white p-6">
     <h1 class="text-xl font-semibold mb-4">Mata Kuliah yang Diambil</h1>
+    <p class="text-gray-700 mb-2">
+      Nama: <span class="font-medium">{{ props.user?.mahasiswa?.nama }}</span><br>
+      NIM: <span class="font-medium">{{ props.user?.mahasiswa?.nim }}</span>
+    </p>
 
     <button @click="openModal" class="bg-blue-500 text-white px-4 py-2 mb-5 rounded mt-4">
-      Tambah Mata Kuliah
+      Ambil Mata Kuliah
     </button>
 
-    <div v-if="loading" class="text-center">Loading...</div>
+    <div v-if="loading" class="flex justify-center py-10">
+      <div class="animate-spin rounded-full h-12 w-12 border-t-4 border-blue-500 border-solid"></div>
+    </div>
 
     <div v-else>
       <table class="min-w-full table-auto">
@@ -96,8 +102,7 @@ import { useToast } from 'vue-toastification'
 const toast = useToast()
 
 const token = localStorage.getItem('token')
-
-watchEffect(async () => {
+const loadData = async () => {
   const mahasiswaId = props.user?.mahasiswa?.id
   if (!mahasiswaId) return
 
@@ -109,25 +114,23 @@ watchEffect(async () => {
       headers: { Authorization: `Bearer ${token}` }
     })
     mataKuliahDiambil.value = response.data.mata_kuliah
+
+    // Ambil semua mata kuliah
+    const responseAll = await axios.get('http://localhost:8000/api/matakuliah', {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+    daftarMataKuliah.value = responseAll.data.filter(mk =>
+      !mataKuliahDiambil.value.some(diambil => diambil.id_mata_kuliah === mk.id)
+    )
   } catch (error) {
-    console.error('Gagal memuat data mata kuliah:', error)
+    console.error('Gagal load data:', error)
   } finally {
     loading.value = false
   }
+}
 
-  try {
-    // Ambil daftar seluruh mata kuliah
-    const response = await axios.get('http://localhost:8000/api/matakuliah', {
-      headers: { Authorization: `Bearer ${token}` }
-    })
-    // Filter untuk hanya menampilkan mata kuliah yang belum diambil
-    daftarMataKuliah.value = response.data.filter(mk =>
-      !mataKuliahDiambil.value.some(diambil => diambil.id_mata_kuliah === mk.id)
-    )
-    console.log(daftarMataKuliah.value)
-  } catch (error) {
-    console.error('Gagal memuat daftar mata kuliah:', error)
-  }
+watchEffect(() => {
+  loadData()
 })
 
 const openModal = () => {
@@ -137,10 +140,6 @@ const openModal = () => {
 const closeModal = () => {
   showModal.value = false
   selectedMataKuliah.value = []
-}
-
-const removeMataKuliah = async (mataKuliahId) => {
-
 }
 
 const selectedMataKuliahId = ref('')
@@ -173,24 +172,33 @@ const submitMataKuliah = async () => {
     closeModal()
     selectedMataKuliah.value = []
 
-    // Refresh data
-    const mahasiswaId = props.user?.mahasiswa?.id
-    const response = await axios.get(`http://localhost:8000/api/mahasiswa-mata-kuliah/${mahasiswaId}`, {
-      headers: { Authorization: `Bearer ${token}` }
-    })
-    mataKuliahDiambil.value = response.data.mata_kuliah
-
-    // Refresh daftar mata kuliah yang belum diambil (filter ulang)
-    const responseAll = await axios.get('http://localhost:8000/api/matakuliah', {
-      headers: { Authorization: `Bearer ${token}` }
-    })
-    daftarMataKuliah.value = responseAll.data.filter(mk =>
-      !mataKuliahDiambil.value.some(diambil => diambil.id_mata_kuliah === mk.id)
-    )
+    await loadData()
 
   } catch (err) {
     console.error("Gagal menyimpan mata kuliah:", err)
     alert("Gagal menyimpan.")
+  }
+}
+
+const removeMataKuliah = async (mataKuliahId) => {
+  const mahasiswaId = props.user?.mahasiswa?.id
+  if (!mahasiswaId) return
+
+  const konfirmasi = window.confirm("Apakah kamu yakin ingin menghapus mata kuliah yang diambil ini?")
+  if (!konfirmasi) return
+
+  try {
+    await axios.delete(`http://localhost:8000/api/mahasiswa-mata-kuliah/${mahasiswaId}`, {
+      headers: { Authorization: `Bearer ${token}` },
+      data: { mata_kuliah_id: mataKuliahId }
+    })
+
+    toast.success("Mata kuliah berhasil dihapus.")
+    await loadData()
+
+  } catch (err) {
+    console.error("Gagal menghapus mata kuliah:", err)
+    toast.error("Gagal menghapus.")
   }
 }
 
