@@ -3,6 +3,9 @@
         <div class="bg-white shadow rounded-2xl p-6">
             <div class="flex justify-between items-center mb-6">
                 <h2 class="text-2xl font-bold text-gray-800">Daftar Mahasiswa - Mata Kuliah - Dosen</h2>
+                <button @click="showModal = true" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+                    Edit
+                </button>
             </div>
 
             <!-- Loading Spinner -->
@@ -33,10 +36,14 @@
             <!-- Pagination -->
             <div class="mt-4 flex flex-wrap justify-start items-center space-x-2">
                 <button @click="goToFirstPage" :disabled="currentPage === 1"
-                    class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed">First</button>
+                    class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed">
+                    First
+                </button>
 
                 <button @click="prevPage" :disabled="currentPage === 1"
-                    class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed">Prev</button>
+                    class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed">
+                    Prev
+                </button>
 
                 <div class="flex space-x-1">
                     <button v-for="page in pageNumbers" :key="page" @click="goToPage(page)" :class="{
@@ -48,12 +55,30 @@
                 </div>
 
                 <button @click="nextPage" :disabled="currentPage === totalPages"
-                    class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed">Next</button>
+                    class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed">
+                    Next
+                </button>
 
                 <button @click="goToLastPage" :disabled="currentPage === totalPages"
-                    class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed">Last</button>
+                    class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed">
+                    Last
+                </button>
 
                 <span class="ml-4 text-gray-600">Page {{ currentPage }} of {{ totalPages }}</span>
+            </div>
+        </div>
+
+        <!-- Modal -->
+        <div v-if="showModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+            <div class="bg-white p-6 rounded-lg w-full max-w-md">
+                <h3 class="text-lg font-semibold mb-4">Pilih Mahasiswa</h3>
+                <multiselect v-model="selectedMahasiswa" :options="daftarMahasiswa"
+                    :custom-label="mahasiswa => mahasiswa.nama" track-by="id" placeholder="Pilih Mahasiswa"
+                    :searchable="true" :close-on-select="true" :allow-empty="false" label="nama" class="w-full" />
+                <div class="flex justify-end gap-2 mt-2">
+                    <button @click="goToDetail" class="bg-green-500 text-white px-4 py-2 rounded">Go</button>
+                    <button @click="showModal = false" class="bg-gray-400 text-white px-4 py-2 rounded">Batal</button>
+                </div>
             </div>
         </div>
     </div>
@@ -62,20 +87,26 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import axios from 'axios'
+import Multiselect from 'vue-multiselect'
+import { useRouter } from 'vue-router'
+import { useToast } from 'vue-toastification'
 
+const router = useRouter()
 const data = ref([])
 const currentPage = ref(1)
 const perPage = 10
 const isLoading = ref(false)
 const token = localStorage.getItem('token')
+const showModal = ref(false)
+const daftarMahasiswa = ref([])
+const selectedMahasiswa = ref({})
+const toast = useToast()
 
 const fetchData = async () => {
     isLoading.value = true
     try {
-        const res = await axios.get('http://localhost:8000/api/mahasiswa-mata-kuliah', {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
+        const res = await axios.get('http://localhost:8000/api/admin/mahasiswa-mata-kuliah', {
+            headers: { Authorization: `Bearer ${token}` }
         })
         data.value = res.data
     } catch (err) {
@@ -83,9 +114,32 @@ const fetchData = async () => {
     } finally {
         isLoading.value = false
     }
+
+    try {
+        const res = await axios.get('http://localhost:8000/api/mahasiswa', {
+            headers: { Authorization: `Bearer ${token}` }
+        })
+        daftarMahasiswa.value = res.data
+    } catch (err) {
+        console.error('Gagal mengambil data mahasiswa:', err)
+    }
 }
 
 onMounted(fetchData)
+
+const goToDetail = () => {
+    console.log(selectedMahasiswa.value)
+    if (!selectedMahasiswa.value || !selectedMahasiswa.value.id) {
+        return toast.error('Isi Field')
+    }
+
+    const mahasiswaId = selectedMahasiswa.value.id
+    router.push({
+        name: 'MahasiswaMataKuliahDetail',
+        params: { id: mahasiswaId },
+        state: { mahasiswa : selectedMahasiswa.value } // Menggunakan state untuk mengirim data
+    }, { shallow: true })
+}
 
 const flattenedData = computed(() => {
     const result = []

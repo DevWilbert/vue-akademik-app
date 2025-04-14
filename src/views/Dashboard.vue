@@ -9,7 +9,6 @@
         <router-view v-slot="{ Component }">
           <component :is="Component" :role="user?.role" :user="user" />
         </router-view>
-
       </div>
     </div>
   </div>

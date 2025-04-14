@@ -110,7 +110,7 @@ const loadData = async () => {
 
   try {
     // Ambil mata kuliah yang diambil mahasiswa
-    const response = await axios.get(`http://localhost:8000/api/mahasiswa-mata-kuliah/${mahasiswaId}`, {
+    const response = await axios.get(`http://localhost:8000/api/mahasiswa/mahasiswa-mata-kuliah/${mahasiswaId}`, {
       headers: { Authorization: `Bearer ${token}` }
     })
     mataKuliahDiambil.value = response.data.mata_kuliah
@@ -164,7 +164,7 @@ const submitMataKuliah = async () => {
       mata_kuliah_ids: selectedMataKuliah.value.map(item => item.id)
     }
 
-    await axios.post('http://localhost:8000/api/mahasiswa-mata-kuliah', payload, {
+    await axios.post('http://localhost:8000/api/mahasiswa/mahasiswa-mata-kuliah', payload, {
       headers: { Authorization: `Bearer ${token}` }
     })
 
@@ -188,7 +188,7 @@ const removeMataKuliah = async (mataKuliahId) => {
   if (!konfirmasi) return
 
   try {
-    await axios.delete(`http://localhost:8000/api/mahasiswa-mata-kuliah/${mahasiswaId}`, {
+    await axios.delete(`http://localhost:8000/api/mahasiswa/mahasiswa-mata-kuliah/${mahasiswaId}`, {
       headers: { Authorization: `Bearer ${token}` },
       data: { mata_kuliah_id: mataKuliahId }
     })

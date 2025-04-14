@@ -7,6 +7,7 @@ import AmbilMataKuliahView from '@/views/AmbilMataKuliahView.vue'
 import Login from '@/views/Login.vue'
 import DashboardHome from '@/views/DashboardHome.vue'
 import MahasiswaMataKuliahView from '@/views/MahasiswaMataKuliahView.vue'
+import MahasiswaMataKuliahDetail from '@/views/MahasiswaMataKuliahDetail.vue'
 
 const routes = [
   { path: '/', component: Login },
@@ -20,6 +21,13 @@ const routes = [
       { path: 'matakuliah', component: MataKuliahView, meta: { requiresAuth: true, role: 'admin' } },
       { path: 'ambil-matakuliah', component: AmbilMataKuliahView, meta: { requiresAuth: true, role: 'mahasiswa' } },
       { path: 'mahasiswa-matakuliah', component: MahasiswaMataKuliahView, meta: { requiresAuth: true, role: 'admin' } },
+      {
+        path: 'mahasiswa-matakuliah/:id',
+        name: 'MahasiswaMataKuliahDetail',
+        component: MahasiswaMataKuliahDetail,
+        meta: { requiresAuth: true, role: 'admin' },
+        props: true
+      }
     ]
   }
 ]
