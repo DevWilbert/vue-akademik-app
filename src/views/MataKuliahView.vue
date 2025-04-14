@@ -12,7 +12,7 @@
         <div class="animate-spin rounded-full h-12 w-12 border-t-4 border-blue-500 border-solid"></div>
       </div>
 
-      <table v-else class="min-w-full table-auto border-collapse">
+      <table v-else class="min-w-full table-auto border-collapse text-sm">
         <thead>
           <tr class="bg-gray-200">
             <th class="px-4 py-2 text-left">Kode</th>
@@ -25,12 +25,12 @@
         </thead>
         <tbody>
           <tr v-for="(matakuliah, index) in paginatedData" :key="matakuliah.id">
-            <td class="px-4 py-2">{{ matakuliah.kode_matakuliah }}</td>
-            <td class="px-4 py-2">{{ matakuliah.nama }}</td>
-            <td class="px-4 py-2">{{ matakuliah.sks }}</td>
-            <td class="px-4 py-2">{{ matakuliah.semester }}</td>
-            <td class="px-4 py-2">{{ matakuliah.dosen.nama }}</td>
-            <td class="px-4 py-2">
+            <td class="px-4 py-2 border">{{ matakuliah.kode_matakuliah }}</td>
+            <td class="px-4 py-2 border">{{ matakuliah.nama }}</td>
+            <td class="px-4 py-2 border">{{ matakuliah.sks }}</td>
+            <td class="px-4 py-2 border">{{ matakuliah.semester }}</td>
+            <td class="px-4 py-2 border">{{ matakuliah.dosen.nama }}</td>
+            <td class="px-4 py-2 border">
               <button @click="openEditModal(matakuliah)" class="text-blue-500 hover:text-blue-700">
                 <i class="fas fa-edit"></i> Edit
               </button>

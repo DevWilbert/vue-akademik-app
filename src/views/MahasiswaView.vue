@@ -13,7 +13,7 @@
       </div>
 
       <!-- Tabel Mahasiswa -->
-      <table v-else class="min-w-full table-auto border-collapse">
+      <table v-else class="min-w-full table-auto border-collapse text-sm">
         <thead>
           <tr class="bg-gray-200">
             <th class="px-4 py-2 text-left">No</th>
@@ -27,13 +27,13 @@
         </thead>
         <tbody>
           <tr v-for="(mahasiswa, index) in paginatedData" :key="mahasiswa.id">
-            <td class="px-4 py-2 w-[40px]">{{ (currentPage - 1) * itemsPerPage + index + 1 }}</td>
-            <td class="px-4 py-2 w-[100px] whitespace-normal break-words">{{ mahasiswa.nama }}</td>
-            <td class="px-4 py-2 w-[100px] whitespace-normal break-all">{{ mahasiswa.nim }}</td>
-            <td class="px-4 py-2 w-[130px] whitespace-normal break-all">{{ mahasiswa.user.email }}</td>
-            <td class="px-4 py-2 w-[100px] whitespace-normal break-words">{{ mahasiswa.alamat }}</td>
-            <td class="px-4 py-2 w-[87px] whitespace-normal break-all">{{ mahasiswa.no_hp }}</td>
-            <td class="px-4 py-2 w-[100px]">
+            <td class="px-4 py-2 w-[40px] border">{{ (currentPage - 1) * itemsPerPage + index + 1 }}</td>
+            <td class="px-4 py-2 w-[100px] whitespace-normal break-words border">{{ mahasiswa.nama }}</td>
+            <td class="px-4 py-2 w-[100px] whitespace-normal break-all border">{{ mahasiswa.nim }}</td>
+            <td class="px-4 py-2 w-[130px] whitespace-normal break-all border">{{ mahasiswa.user.email }}</td>
+            <td class="px-4 py-2 w-[100px] whitespace-normal break-words border">{{ mahasiswa.alamat }}</td>
+            <td class="px-4 py-2 w-[87px] whitespace-normal break-all border">{{ mahasiswa.no_hp }}</td>
+            <td class="px-4 py-2 w-[100px] border">
               <button @click="openEditModal(mahasiswa)" class="text-blue-500 hover:text-blue-700">
                 <i class="fas fa-edit"></i> Edit
               </button>
