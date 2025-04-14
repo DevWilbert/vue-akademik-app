@@ -182,7 +182,7 @@ const submitMataKuliah = async () => {
       headers: { Authorization: `Bearer ${token}` }
     })
 
-    toast.success("Mata kuliah berhasil ditambahkan.")
+    toast.success("Pengambilan Mata kuliah berhasil.")
     closeModal()
     selectedMataKuliah.value = []
 
@@ -207,7 +207,7 @@ const removeMataKuliah = async (mataKuliahId) => {
       data: { mata_kuliah_id: mataKuliahId }
     })
 
-    toast.success("Mata kuliah berhasil dihapus.")
+    toast.success("Mata kuliah yang diambil berhasil dihapus.")
     await loadData()
 
   } catch (err) {

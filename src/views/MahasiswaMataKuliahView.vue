@@ -76,7 +76,14 @@
                     :custom-label="mahasiswa => mahasiswa.nama" track-by="id" placeholder="Pilih Mahasiswa"
                     :searchable="true" :close-on-select="true" :allow-empty="false" label="nama" class="w-full" />
                 <div class="flex justify-end gap-2 mt-2">
-                    <button @click="goToDetail" class="bg-green-500 text-white px-4 py-2 rounded">Go</button>
+                    <!-- <button @click="goToDetail" class="bg-green-500 text-white px-4 py-2 rounded">Go</button> -->
+                    <router-link v-if="selectedMahasiswa && selectedMahasiswa.id"
+                        :to="'/dashboard/mahasiswa-matakuliah/' + selectedMahasiswa.id"
+                        class="bg-green-500 text-white px-4 py-2 rounded inline-block text-center">
+                        Go
+                    </router-link>
+
+
                     <button @click="showModal = false" class="bg-gray-400 text-white px-4 py-2 rounded">Batal</button>
                 </div>
             </div>
@@ -127,19 +134,21 @@ const fetchData = async () => {
 
 onMounted(fetchData)
 
-const goToDetail = () => {
-    console.log(selectedMahasiswa.value)
-    if (!selectedMahasiswa.value || !selectedMahasiswa.value.id) {
-        return toast.error('Isi Field')
-    }
+// const goToDetail = () => {
+//     console.log(selectedMahasiswa.value)
+//     if (!selectedMahasiswa.value || !selectedMahasiswa.value.id) {
+//         return toast.error('Isi Field')
+//     }
 
-    const mahasiswaId = selectedMahasiswa.value.id
-    router.push({
-        name: 'MahasiswaMataKuliahDetail',
-        params: { id: mahasiswaId },
-        state: { mahasiswa : selectedMahasiswa.value } // Menggunakan state untuk mengirim data
-    }, { shallow: true })
-}
+//     const mahasiswaId = selectedMahasiswa.value.id
+
+//     router.push({
+//         name: 'MahasiswaMataKuliahDetail',
+//         params: { id: mahasiswaId },
+//         state: { mahasiswa: selectedMahasiswa.value },
+//     })
+
+// }
 
 const flattenedData = computed(() => {
     const result = []
