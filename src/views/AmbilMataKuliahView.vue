@@ -15,7 +15,10 @@
     </div>
 
     <div v-else>
-      <table class="min-w-full table-auto">
+      <div v-if="mataKuliahDiambil.length === 0" class="text-center text-gray-600 py-6">
+        Belum ada mata kuliah yang diambil.
+      </div>
+      <table v-else class="min-w-full table-auto text-sm">
         <thead>
           <tr>
             <th class="px-4 py-2 border">No</th>
