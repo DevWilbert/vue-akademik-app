@@ -4,7 +4,7 @@
             <div class="flex justify-between items-center mb-6">
                 <h2 class="text-2xl font-bold text-gray-800">Daftar Mahasiswa - Mata Kuliah - Dosen</h2>
                 <button @click="showModal = true" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
-                    Edit
+                    Search
                 </button>
             </div>
 
@@ -76,7 +76,6 @@
                     :custom-label="mahasiswa => mahasiswa.nama" track-by="id" placeholder="Pilih Mahasiswa"
                     :searchable="true" :close-on-select="true" :allow-empty="false" label="nama" class="w-full" />
                 <div class="flex justify-end gap-2 mt-2">
-                    <!-- <button @click="goToDetail" class="bg-green-500 text-white px-4 py-2 rounded">Go</button> -->
                     <router-link v-if="selectedMahasiswa && selectedMahasiswa.id"
                         :to="'/dashboard/mahasiswa-matakuliah/' + selectedMahasiswa.id"
                         class="bg-green-500 text-white px-4 py-2 rounded inline-block text-center">
@@ -133,22 +132,6 @@ const fetchData = async () => {
 }
 
 onMounted(fetchData)
-
-// const goToDetail = () => {
-//     console.log(selectedMahasiswa.value)
-//     if (!selectedMahasiswa.value || !selectedMahasiswa.value.id) {
-//         return toast.error('Isi Field')
-//     }
-
-//     const mahasiswaId = selectedMahasiswa.value.id
-
-//     router.push({
-//         name: 'MahasiswaMataKuliahDetail',
-//         params: { id: mahasiswaId },
-//         state: { mahasiswa: selectedMahasiswa.value },
-//     })
-
-// }
 
 const flattenedData = computed(() => {
     const result = []

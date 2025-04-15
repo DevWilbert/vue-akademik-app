@@ -122,6 +122,7 @@ const loadData = async () => {
     const responseAll = await axios.get('http://localhost:8000/api/matakuliah', {
       headers: { Authorization: `Bearer ${token}` }
     })
+    // Filter Mata Kuliah yang belum diambil
     daftarMataKuliah.value = responseAll.data.filter(mk =>
       !mataKuliahDiambil.value.some(diambil => diambil.id_mata_kuliah === mk.id)
     )
